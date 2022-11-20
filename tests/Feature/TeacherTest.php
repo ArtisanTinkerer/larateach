@@ -137,22 +137,35 @@ class TeacherTest extends TestCase
             ->classes
             ->data;
 
+
+
+        //somethnig is slow here
         $studentsDays = [];
         //iterate the classes to get the lessons
         foreach ($classes as $class) {
             foreach ($class->lessons->data as $lesson) { //better way to do this
                 //get the day from the lesson
-                $day      = Carbon::parse($lesson->start_at->date)->format('l');
+                $day      = Carbon::parse($lesson->start_at->date)->dayOfWeekIso;
                 $students = $school
                     ->classes
                     ->get($class->id, ['students'])
                     ->students
                     ->data;
 
-                $studentDays[$day]['students'] = $students;
+                $studentsDays[$day]['students'] = array_merge($studentsDays[$day]['students'] ?? [], $students);
             }
+        }
+
+        $uniqueStudentDays = [];
+        //make unique now
+        foreach ($studentsDays as $key => $value){
+            $students = collect($value['students']);
+            $uniqueStudents = $students->unique('id');
+            $uniqueStudentDays[$key] = $uniqueStudents;
+        }
+            ksort($uniqueStudentDays);
 
             $this->markTestIncomplete();
-        }
     }
+
 }
