@@ -21,17 +21,22 @@ class GetStudents extends Command
      */
     protected $description = 'Gets the students that a teacher will see that day';
 
-
     /**
      * Execute the console command.
      *
+     * @param StudentsService $service
+     *
      * @return int
      */
-    public function handle(StudentsService $service)
+    public function handle(StudentsService $service): int
     {
         //could use an interface ^ but overkill for this task
 
         $studentsAndDays =  $service->getStudentsForTeacher($this->argument('employeeId'));
+        if($service->errorMessage !=''){
+            $this->error($service->errorMessage);
+            return Command::FAILURE;
+        }
 
         $this->info('Your students will be:');
         foreach ($studentsAndDays as $key => $value){
@@ -41,7 +46,6 @@ class GetStudents extends Command
                 $this->info("$student->forename $student->surname");
             }
         }
-
 
         return Command::SUCCESS;
     }
