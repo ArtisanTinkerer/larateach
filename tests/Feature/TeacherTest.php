@@ -3,28 +3,41 @@
 namespace Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
+use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Http;
 use Wonde\Client;
+use Wonde\Endpoints\Schools;
 
 class TeacherTest extends TestCase
 {
 
+    //normally I would mock external calls in a test
+    //but this is how I started the task
+    //just to check that I can get the sdk working
+
     /**
-     * A basic test example.
+     * @var
+     */
+    private $school;
+
+    /**
+     * Make a Wonde school.
+     * Can't do this in setUp because we won't be able to access env()
      *
      * @return void
+     * @throws \Wonde\Exceptions\InvalidTokenException
      */
-    public function test_the_application_returns_a_successful_response()
+    private function makeSchool(): void
     {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
+        $client       = new Client(env('WONDE_TOKEN'));
+        $this->school = $client->school(env('TEST_SCHOOL_ID'));
     }
+
+
 
     // As a Teacher I want to be able to see which students are in my class each day of the week so that I can be
     // suitably prepared.
-
 
     //Full documentation on the Wonde API can be found here:
     //https://wonde.com/docs/api/1.0/
@@ -36,16 +49,13 @@ class TeacherTest extends TestCase
     //● Classes https://docs.wonde.com/docs/api/sync#classes
     //We have a test school (Wonde Testing School ID: A1930499544) for you use.
 
-
     //focus on:
     // auth []
     // employees []
     // classes []
 
-
 //curl https://api.wonde.com/v1.0 \
 //-H "Authorization: Bearer 7e76896f9aca62569048c667db292d72dd84f224"
-
 
     // can auth [x]
 
@@ -64,14 +74,12 @@ class TeacherTest extends TestCase
     public function can_connect_with_client()
     {
         $client = new Client(env('WONDE_TOKEN'));
-        $school = $client->schools->get(env('TEST_SCHOOL_ID'));
-        $this->assertTrue($school->id === env('TEST_SCHOOL_ID') );
+        $school = $client->schools->get(env('TEST_SCHOOL_ID')); //Stdclass when get
+        $this->assertTrue($school->id === env('TEST_SCHOOL_ID'));
     }
 
     //sdk has classes index
     //and teachers index
-
-
 
     //exception handing[]
 
@@ -84,18 +92,67 @@ class TeacherTest extends TestCase
     /** @test */
     public function can_get_employees()
     {
-        $client = new Client(env('WONDE_TOKEN'));
-        $school = $client->schools->get(env('TEST_SCHOOL_ID'));
-
-        foreach ($school->employees->all() as $employee) {
+        $this->makeSchool();
+        //use the iterator
+        foreach ($this->school->employees->all() as $employee) {
             echo $employee->forename . ' ' . $employee->surname . PHP_EOL;
         }
 
-        //$this->assertTrue($school->id === env('TEST_SCHOOL_ID') );
+        $this->markTestSkipped();
     }
 
+    //now I have an employee
 
+    //result = {stdClass} [15]
+    // id = "A571916931"
+    // upi = "52d15453c0b645a9aef90b1f94446da5"
+    // mis_id = "6910"
+    // initials = "KW"
+    // title = "Miss"
+    // surname = "Wells"
+    // forename = "Kris"
+    // middle_names = null
+    // legal_surname = "Wells"
+    // legal_forename = "Kris"
+    // gender = null
+    // date_of_birth = null
+    // restored_at = null
 
-    //check updated_after []
+    //get the lessons for an employee  (lessons have the date)
+    //lesson has one class
+    //class has many students
 
+    /** @test */
+    public function can_get_it_all()
+    {
+        //Please be aware that the lessons endpoint will only return one academic week of data at a time. Even in the
+        //event of specifying the ‘lessons_start_after’ paramater you would only return that academic week.
+
+        $client = new Client(env('WONDE_TOKEN'));
+        $school = $client->school(env('TEST_SCHOOL_ID'));
+
+        $employeeId = 'A2082387062';
+
+        $classes = $school->employees->get($employeeId, ['classes.lessons'])
+            ->classes
+            ->data;
+
+        $studentsDays = [];
+        //iterate the classes to get the lessons
+        foreach ($classes as $class) {
+            foreach ($class->lessons->data as $lesson) { //better way to do this
+                //get the day from the lesson
+                $day      = Carbon::parse($lesson->start_at->date)->format('l');
+                $students = $school
+                    ->classes
+                    ->get($class->id, ['students'])
+                    ->students
+                    ->data;
+
+                $studentDays[$day]['students'] = $students;
+            }
+
+            $this->markTestIncomplete();
+        }
+    }
 }
