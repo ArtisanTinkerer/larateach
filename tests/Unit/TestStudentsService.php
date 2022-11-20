@@ -13,8 +13,7 @@ class TestStudentsService extends TestCase
         $service = new StudentsService();
         $studentsAndDays =  $service->getStudentsForTeacher(env('TEST_TEACHER_ID'));
 
-
-        $this->assertTrue(true);
+        $this->assertTrue(count($studentsAndDays) > 0);
     }
 
 

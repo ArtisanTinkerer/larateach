@@ -134,4 +134,13 @@ class TeacherTest extends TestCase
             $this->markTestIncomplete();
     }
 
+
+
+    /** @test */
+    public function can_get_students_with_command()
+    {
+        $employeeId = env('TEST_TEACHER_ID');
+        $command = "students:get $employeeId";
+        $this->artisan($command)->assertExitCode(0);
+    }
 }
