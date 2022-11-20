@@ -19,6 +19,10 @@
     </coverage>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="WONDE_TOKEN" value="24c39992028322eca8d9d8898e1e523eaca6e9a8"/>
+        <env name="TEST_SCHOOL_ID" value="A1930499544"/>
+        <env name="TEST_TEACHER_ID" value="A2082387062"/>
+
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="DB_DATABASE" value="testing"/>

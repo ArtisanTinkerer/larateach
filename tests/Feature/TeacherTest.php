@@ -17,11 +17,6 @@ class TeacherTest extends TestCase
     //just to check that I can get the sdk working
 
     /**
-     * @var
-     */
-    private $school;
-
-    /**
      * Make a Wonde school.
      * Can't do this in setUp because we won't be able to access env()
      *
@@ -34,30 +29,6 @@ class TeacherTest extends TestCase
         $this->school = $client->school(env('TEST_SCHOOL_ID'));
     }
 
-
-
-    // As a Teacher I want to be able to see which students are in my class each day of the week so that I can be
-    // suitably prepared.
-
-    //Full documentation on the Wonde API can be found here:
-    //https://wonde.com/docs/api/1.0/
-    //We also have a PHP client SDK that you can use:
-    //https://github.com/wondeltd/php-client
-    //We expect you will need to focus on the following APIs in particular:
-    //● Authentication https://docs.wonde.com/docs/api/sync#authentication
-    //● Employees https://docs.wonde.com/docs/api/sync#employees
-    //● Classes https://docs.wonde.com/docs/api/sync#classes
-    //We have a test school (Wonde Testing School ID: A1930499544) for you use.
-
-    //focus on:
-    // auth []
-    // employees []
-    // classes []
-
-//curl https://api.wonde.com/v1.0 \
-//-H "Authorization: Bearer 7e76896f9aca62569048c667db292d72dd84f224"
-
-    // can auth [x]
 
     /** @test */
     public function can_auth_with_wonde()
@@ -78,16 +49,7 @@ class TeacherTest extends TestCase
         $this->assertTrue($school->id === env('TEST_SCHOOL_ID'));
     }
 
-    //sdk has classes index
-    //and teachers index
-
-    //exception handing[]
-
-    //teacher wants to see who is in class
-    //each day of week
-
-    // could use GET Employees
-    // will return classes
+    //grab and employee for testsing
 
     /** @test */
     public function can_get_employees()
@@ -118,10 +80,6 @@ class TeacherTest extends TestCase
     // date_of_birth = null
     // restored_at = null
 
-    //get the lessons for an employee  (lessons have the date)
-    //lesson has one class
-    //class has many students
-
     /** @test */
     public function can_get_it_all()
     {
@@ -131,15 +89,21 @@ class TeacherTest extends TestCase
         $client = new Client(env('WONDE_TOKEN'));
         $school = $client->school(env('TEST_SCHOOL_ID'));
 
-        $employeeId = 'A2082387062';
+        $employeeId = env('TEST_TEACHER_ID');
 
         $classes = $school->employees->get($employeeId, ['classes.lessons'])
             ->classes
             ->data;
 
+        //employee has many classes
+        // class has many lessons
+        // get classes for an employee
+        // get lessons or each class
+        //       lesson has start_at - to get day
+        // get the students from the class
 
 
-        //somethnig is slow here
+        //something is slow here
         $studentsDays = [];
         //iterate the classes to get the lessons
         foreach ($classes as $class) {
@@ -163,7 +127,9 @@ class TeacherTest extends TestCase
             $uniqueStudents = $students->unique('id');
             $uniqueStudentDays[$key] = $uniqueStudents;
         }
-            ksort($uniqueStudentDays);
+        ksort($uniqueStudentDays);
+
+        $this->markTestIncomplete();
 
             $this->markTestIncomplete();
     }
