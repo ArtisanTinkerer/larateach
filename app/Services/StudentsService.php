@@ -7,8 +7,19 @@ use Carbon\Carbon;
 
 class StudentsService
 {
+    /**
+     * @var \Wonde\Endpoints\Schools
+     */
     private $school;
+
+    /**
+     * @var
+     */
     private $classes;
+
+    /**
+     * @var string
+     */
     public $errorMessage;
 
     /**
@@ -53,8 +64,8 @@ class StudentsService
         }
 
         $this->getClasses($employeeId);
-        $studentsDays = [];
 
+        $studentsDays = [];
         foreach ($this->classes as $class) {
             foreach ($class->lessons->data as $lesson) { //better way to do this?
                 //get the day from the lesson

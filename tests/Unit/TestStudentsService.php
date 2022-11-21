@@ -26,7 +26,6 @@ class TestStudentsService extends TestCase
         $studentsAndDays =  $service->getStudentsForTeacher('fdsafdsf'); //would normally use Faker
 
         $this->assertTrue($service->errorMessage === 'Invalid employee ID');
-
     }
 
 }
