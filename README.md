@@ -19,3 +19,11 @@ The signature is:
 * handle the Wonde API not being available.
 * environment variable should be accessed using config
 
+## Files
+
+TeacherTest.php - some quick tests to check that I could connect to Wonde
+and to see what wes being retrieved.
+TestStudentsService.php - unit tests used to drive the development of the service.
+StudentsService.php - the service which makes the call to Wonde.
+GetService.php - an Artisan command which utilises the service.
+
