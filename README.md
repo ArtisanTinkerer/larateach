@@ -14,6 +14,8 @@ The signature is:
 
  
 ## Todo
-* don't like the nested foreach
+* don't like the nested foreach (Uncle Bob wouldn't either).
 * in the real world the service class would have an interface.
 * handle the Wonde API not being available.
+* environment variable should be accessed using config
+
