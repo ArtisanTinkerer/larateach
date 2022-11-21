@@ -21,9 +21,9 @@ The signature is:
 
 ## Files
 
-TeacherTest.php - some quick tests to check that I could connect to Wonde
-and to see what wes being retrieved.
-TestStudentsService.php - unit tests used to drive the development of the service.
-StudentsService.php - the service which makes the call to Wonde.
-GetService.php - an Artisan command which utilises the service.
+* ```TeacherTest.php``` - some quick tests to check that I could connect to Wonde
+and to see what was being retrieved.
+* ```TestStudentsService.php``` - unit tests used to drive the development of the service.
+* ```StudentsService.php``` - the service which makes the call to Wonde.
+* ```GetService.php``` - an Artisan command which utilises the service.
 
