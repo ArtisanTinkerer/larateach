@@ -13,3 +13,7 @@ The signature is:
 ```php artisan students:get <employeeId>```
 
  
+## Todo
+* don't like the nested foreach
+* in the real world the service class would have an interface.
+* handle the Wonde API not being available.
